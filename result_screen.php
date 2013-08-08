@@ -8,10 +8,12 @@
 		$wine_name = $_GET['wine_name'];
 		$grape_variety = $_GET['grape_variety'];
 
-		$query = 'SELECT wine.wine_id, wine.wine_name 
-			FROM wine, wine_variety, grape_variety
+		$query = 'SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name 
+			FROM wine, wine_variety, grape_variety, winery, region
 			WHERE wine.wine_id = wine_variety.wine_id
-			AND wine_variety.variety_id = grape_variety.variety_id 
+			AND wine_variety.variety_id = grape_variety.variety_id
+			AND wine.winery_id = winery.winery_id
+			AND winery.region_id = region.region_id
 			AND wine.wine_name LIKE \'%'. $wine_name .'%\' 
 			AND grape_variety.variety LIKE \''. $grape_variety  .'\';';
 
@@ -26,8 +28,10 @@
 		{
 			$result_id = $row['wine_id'];
 			$result_name = $row['wine_name'];
+			$result_winery = $row['winery_name'];
+			$result_region = $row['region_name'];
 
-			echo '<p>'. $result_id .' '. $result_name .', ';
+			echo '<p>'. $result_id .' '. $result_name .', '. $result_winery .', '. $result_region .', ';
 			
 			$query_v = 'SELECT grape_variety.variety
 				FROM wine, wine_variety, grape_variety
