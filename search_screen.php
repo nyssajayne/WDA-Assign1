@@ -57,15 +57,15 @@
 			<p>Winery Name: <input type="text" name="winery_name" id="winery_name" /></p>
 			<p>Region: <input type="text" name="region_name" id="region_name" /></p>
 			<p>Grape Variety:
-				 <select>
+				 <select name="grape_variety" id="grape_variety">
 					<?php populate_grape_variety(); ?>
 				</select></p>
 			<p>Year, between: 
-				<select>
+				<select name="min_year" id="min_year">
 					<?php populate_year('min'); ?>
 				</select> and 
 				
-				<select>
+				<select name="max_year" id="max_year">
 					<?php populate_year('max'); ?>
 				</select></p>
 			<p>Min. no. of bottles in stock: <input type="text" name="on_hand" id="on_hand" /></p>
