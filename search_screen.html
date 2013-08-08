@@ -12,7 +12,19 @@
 
 		<form>
 
-			<input type="text" name="wineName" id="wineName" />
+			<p>Wine Name: <input type="text" name="wine_name" id="wine_name" /></p>
+			<p>Winery Name: <input type="text" name="winery_name" id="winery_name" /></p>
+			<p>Region: <input type="text" name="region_name" id="region_name" /></p>
+			<p>Grape Variety:
+				 <select>
+					<?php populate_grape_variety() ?>
+				</select></p>
+			<p>Year, between: <option></option> and <option></option></p>
+			<p>Min. no. of bottles in stock: <input type="text" name="on_hand" id="on_hand" /></p>
+			<p>Min. no. of bottles ordered: <input type="text" name="qty" id="qty" /></p>
+			<p>Maximum cost: <input type="text" name="cost" id="cost" /></p>
+
+			<p><input type="submit" name="submit" id="submit" value="submit" /></p>
 
 		</form>
 
