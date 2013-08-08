@@ -51,7 +51,7 @@
 
 		<h1>Search Winestore Database</h1>
 
-		<form>
+		<form action="result_screen.php" method="GET">
 
 			<p>Wine Name: <input type="text" name="wine_name" id="wine_name" /></p>
 			<p>Winery Name: <input type="text" name="winery_name" id="winery_name" /></p>
