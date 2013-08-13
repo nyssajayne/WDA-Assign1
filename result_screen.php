@@ -22,7 +22,8 @@
 			AND grape_variety.variety LIKE \'%'. $grape_variety  .'%\'
 			AND winery.winery_name LIKE \'%'. $winery_name .'%\'
 			AND region.region_name LIKE \'%'. $region_name .'%\'
-			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\';';
+			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
+			;';
 
 		$result = mysql_query($query);
 
@@ -56,7 +57,21 @@
 				echo $result_variety .', ';
 			}
 
-			echo $result_year .'</p>';
+			echo $result_year .', ';
+
+			$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
+				FROM items
+				WHERE wine_id = \''. $result_id  .'\';';
+
+			$result_s = mysql_query($query_s);
+
+			while($row_s = mysql_fetch_array($result_s))
+			{
+				$result_qty = $row_s['qty'];
+				$result_price = $row_s['price'];
+
+				echo $result_qty .', '. $result_price .'</p>';
+			}
 		}
 	}
 
