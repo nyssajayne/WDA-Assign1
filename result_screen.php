@@ -15,6 +15,15 @@
 		$qty = $_GET['qty'];
 		$cost = $_GET['cost'];
 
+		if($cost!=null)
+		{
+			$query_cost = 'AND inventory.cost < \''. $cost .'\'';
+		}
+		else
+		{
+			$query_cost = '';
+		}
+
 		$query = 'SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
 			FROM wine, wine_variety, grape_variety, winery, region, inventory
 			WHERE wine.wine_id = wine_variety.wine_id
@@ -27,8 +36,9 @@
 			AND winery.winery_name LIKE \'%'. $winery_name .'%\'
 			AND region.region_name LIKE \'%'. $region_name .'%\'
 			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
-			AND inventory.cost <  \''. $cost  .'\'
-			AND inventory.on_hand > \''. $on_hand  .'\';';
+			AND inventory.on_hand > \''. $on_hand .'\'
+			'. $query_cost .'
+			;';
 
 		$result = mysql_query($query);
 
