@@ -27,7 +27,8 @@
 			AND winery.winery_name LIKE \'%'. $winery_name .'%\'
 			AND region.region_name LIKE \'%'. $region_name .'%\'
 			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
-			AND inventory.cost <  \''. $cost  .'\';';
+			AND inventory.cost <  \''. $cost  .'\'
+			AND inventory.on_hand > \''. $on_hand  .'\';';
 
 		$result = mysql_query($query);
 
