@@ -11,10 +11,14 @@
 		$region_name = $_GET['region_name'];
 		$min_year = $_GET['min_year'];
 		$max_year = $_GET['max_year'];
+		$on_hand = $_GET['on_hand'];
+		$qty = $_GET['qty'];
+		$cost = $_GET['cost'];
 
 		$query = 'SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
-			FROM wine, wine_variety, grape_variety, winery, region
+			FROM wine, wine_variety, grape_variety, winery, region, inventory
 			WHERE wine.wine_id = wine_variety.wine_id
+			AND wine.wine_id = inventory.wine_id
 			AND wine_variety.variety_id = grape_variety.variety_id
 			AND wine.winery_id = winery.winery_id
 			AND winery.region_id = region.region_id
@@ -23,7 +27,7 @@
 			AND winery.winery_name LIKE \'%'. $winery_name .'%\'
 			AND region.region_name LIKE \'%'. $region_name .'%\'
 			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
-			;';
+			AND inventory.cost <  \''. $cost  .'\';';
 
 		$result = mysql_query($query);
 
