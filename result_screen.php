@@ -63,46 +63,54 @@
 		{
 			echo '<p>No results</p>';
 		}
-
-		while($row = mysql_fetch_array($result))
+		else
 		{
-			$result_id = $row['wine_id'];
-			$result_name = $row['wine_name'];
-			$result_winery = $row['winery_name'];
-			$result_region = $row['region_name'];
-			$result_year = $row['year'];
+			echo '<table>';
+			echo '<tr>';
+			echo '<td>Wine Name</td>';
+			echo '<td>Winery</td>';
+			echo '<td>Region</td>';
 
-			echo '<p>'. $result_id .' '. $result_name .', '. $result_winery .', '. $result_region .', ';
-			
-			$query_v = 'SELECT grape_variety.variety
-				FROM wine, wine_variety, grape_variety
-				WHERE wine.wine_id = \''. $result_id  .'\'
-				AND wine.wine_id = wine_variety.wine_id
-				AND wine_variety.variety_id = grape_variety.variety_id;';
-
-			$result_v = mysql_query($query_v);
-			
-			while($row_v = mysql_fetch_array($result_v))
+			while($row = mysql_fetch_array($result))
 			{
-				$result_variety = $row_v['variety'];
+				$result_id = $row['wine_id'];
+				$result_name = $row['wine_name'];
+				$result_winery = $row['winery_name'];
+				$result_region = $row['region_name'];
+				$result_year = $row['year'];
 
-				echo $result_variety .', ';
-			}
+				echo '<p>'. $result_id .' '. $result_name .', '. $result_winery .', '. $result_region .', ';
+			
+				$query_v = 'SELECT grape_variety.variety
+					FROM wine, wine_variety, grape_variety
+					WHERE wine.wine_id = \''. $result_id  .'\'
+					AND wine.wine_id = wine_variety.wine_id
+					AND wine_variety.variety_id = grape_variety.variety_id;';
 
-			echo $result_year .', ';
+				$result_v = mysql_query($query_v);
+			
+				while($row_v = mysql_fetch_array($result_v))
+				{
+					$result_variety = $row_v['variety'];
 
-			$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
-				FROM items
-				WHERE wine_id = \''. $result_id  .'\';';
+					echo $result_variety .', ';
+				}
 
-			$result_s = mysql_query($query_s);
+				echo $result_year .', ';
 
-			while($row_s = mysql_fetch_array($result_s))
-			{
-				$result_qty = $row_s['qty'];
-				$result_price = $row_s['price'];
+				$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
+					FROM items
+					WHERE wine_id = \''. $result_id  .'\';';
 
-				echo $result_qty .', '. $result_price .'</p>';
+				$result_s = mysql_query($query_s);
+
+				while($row_s = mysql_fetch_array($result_s))
+				{
+					$result_qty = $row_s['qty'];
+					$result_price = $row_s['price'];
+
+					echo $result_qty .', '. $result_price .'</p>';
+				}
 			}
 		}
 	}
