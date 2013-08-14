@@ -16,6 +16,12 @@
 		$qty = $_GET['qty'];
 		$cost = $_GET['cost'];
 
+		//If min year is greater than max year, exit
+		if($min_year > $max_year)
+		{
+			echo '<p>The minimum year is higher than the maximum year, please go back and refine the search.</p>';
+		}
+
 		//If cost is not null, add it to the SQL Query
 		if($cost!=null)
 		{
