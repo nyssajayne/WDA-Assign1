@@ -24,10 +24,20 @@
 			$query_cost = '';
 		}
 
+		if($qty!=null)
+		{
+			$query_qty = 'AND items.qty > \''. $qty .'\'';
+		}
+		else
+		{
+			$query_qty = '';
+		}
+
 		$query = 'SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
-			FROM wine, wine_variety, grape_variety, winery, region, inventory
+			FROM wine, wine_variety, grape_variety, winery, region, inventory, items
 			WHERE wine.wine_id = wine_variety.wine_id
 			AND wine.wine_id = inventory.wine_id
+			AND wine.wine_id = items.wine_id
 			AND wine_variety.variety_id = grape_variety.variety_id
 			AND wine.winery_id = winery.winery_id
 			AND winery.region_id = region.region_id
@@ -38,6 +48,8 @@
 			AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
 			AND inventory.on_hand > \''. $on_hand .'\'
 			'. $query_cost .'
+			'. $query_qty .'
+			GROUP BY wine.wine_id;
 			;';
 
 		$result = mysql_query($query);
@@ -45,6 +57,11 @@
 		if($result == FALSE)
 		{
 			echo mysql_error();
+		}
+
+		if(mysql_num_rows($result) <= 0)
+		{
+			echo '<p>No results</p>';
 		}
 
 		while($row = mysql_fetch_array($result))
