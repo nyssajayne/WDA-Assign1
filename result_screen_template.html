@@ -1,0 +1,48 @@
+<html>
+
+	<head>
+
+		<title>Winestore Results</title>
+
+		<style>
+			table
+			{
+				border: solid black 1px;
+			}
+		</style>
+
+	</head>
+
+	<body>
+
+		<h1>Winestore Results</h1>
+
+		<table>
+
+			<tr>
+				<td>Wine Name</td>
+				<td>Winery</td>
+				<td>Region</td>
+				<td>Variety</td>
+				<td>Year</td>
+				<td>Quantity on Hand</td>
+				<td>Total Sales Revenue</td>
+			</tr>
+
+			<!-- $BeginBlock block1 -->
+			<tr>
+				<td>${wine_name}</td>
+				<td>${winery}</td>
+				<td>${region}</td>
+				<td>${variety}</td>
+				<td>${year}</td>
+				<td>${qty}</td>
+				<td>${sales}</td>
+			</tr>
+			<!-- $EndBlock block1 -->
+
+		</table>
+
+	</body>
+
+</html>
