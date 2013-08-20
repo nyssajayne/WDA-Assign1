@@ -104,6 +104,7 @@
 				echo '<td>'. $result_winery .'</td>'; 
 				echo '<td>'. $result_region .'</td>';
 			
+				//Print the grape varieties (some wines are blends)
 				$query_v = 'SELECT grape_variety.variety
 					FROM wine, wine_variety, grape_variety
 					WHERE wine.wine_id = \''. $result_id  .'\'
@@ -125,6 +126,7 @@
 
 				echo '<td>'. $result_year .'</td>';
 
+				//Fetches quantities and prices, needs the wine_id, which we now have
 				$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
 					FROM items
 					WHERE wine_id = \''. $result_id  .'\';';
