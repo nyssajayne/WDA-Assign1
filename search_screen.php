@@ -12,9 +12,7 @@
 
 	$query = 'SELECT variety FROM grape_variety;';
 
-	$result = mysql_query($query);
-
-	while($row = mysql_fetch_array($result))
+	foreach($db->query($query) as $row)
 	{
 		$option_value = $row['variety'];
 		$t->setVariable("variety", $option_value);
@@ -23,9 +21,7 @@
 
 	$query_min = 'SELECT DISTINCT year FROM wine ORDER BY year';
 	
-	$result_min = mysql_query($query_min);
-
-	while($row_min = mysql_fetch_array($result_min))
+	foreach($db->query($query_min) as $row_min)
 	{
 		$option_value = $row_min['year'];
 		$t->setVariable("min_year", $option_value);
@@ -34,9 +30,7 @@
 
 	$query_max = 'SELECT DISTINCT year FROM wine ORDER BY year DESC;';
 
-	$result_max = mysql_query($query_max);
-
-	while($row_max = mysql_fetch_array($result_max))
+	foreach($db->query($query_max) as $row_max)
 	{
 		$option_value = $row_max['year'];
 		$t->setVariable("max_year", $option_value);
