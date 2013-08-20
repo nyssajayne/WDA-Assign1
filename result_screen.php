@@ -24,7 +24,8 @@
 	//If min year is greater than max year, exit
 	if($min_year > $max_year)
 	{
-		echo '<p>The minimum year is higher than the maximum year, please go back and refine the search.</p>';
+		set_result_metadata($t, "The minimum year is higher than the maximum year, please go back and refine the search.");
+		$t->generateOutput();
 		return;
 	}
 
@@ -73,18 +74,24 @@
 	//If there's something wrong with the query, display the error.
 	if($result == FALSE)
 	{
-		echo mysql_error();
+		$show_error =  mysql_error();
+		set_result_metadata($t, $show_error);
 	}
 
+	$no_of_results = mysql_num_rows($result);
+
 	//If there are no results.
-	if(mysql_num_rows($result) <= 0)
+	if($no_of_results <= 0)
 	{
-		echo '<p>No results</p>';
+		set_result_metadata($t, "No results.");
 	}
 
 	//Else print it.
 	else
 	{
+		$show_results = 'There are '. $no_of_results .' results.';
+		set_result_metadata($t, $show_results);
+
 		while($row = mysql_fetch_array($result))
 		{
 			$result_id = $row['wine_id'];
@@ -113,7 +120,7 @@
 				$result_variety = $row_v['variety'];
 				
 				$t->setVariable("variety", $result_variety);
-				$t->addBlock("block2");
+				$t->addBlock("variety_block");
 			}
 			
 
@@ -132,13 +139,19 @@
 
 				$t->setVariable("qty", $result_qty);
 				$t->setVariable("price", $result_price);
-				$t->addBlock("block3");
+				$t->addBlock("inventory_block");
 			}
 			
-			$t->addBlock("block1");
+			$t->addBlock("wine_block");
 		}
 
 	}
 
 	$t->generateOutput();
+
+	function set_result_metadata($t, $message)
+	{
+		$t->setVariable("result_metadata", $message);
+		$t->addBlock("result_metadata_block");
+	}
 ?>

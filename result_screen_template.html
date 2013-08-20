@@ -17,6 +17,10 @@
 
 		<h1>Winestore Results</h1>
 
+		<!-- $BeginBlock result_metadata_block -->
+		<p>${result_metadata}</p>
+		<!-- $EndBlock result_metadata_block -->
+
 		<table>
 
 			<tr>
@@ -29,22 +33,22 @@
 				<td>Total Sales Revenue</td>
 			</tr>
 
-			<!-- $BeginBlock block1 -->
+			<!-- $BeginBlock wine_block -->
 			<tr>
 				<td>${wine_name}</td>
 				<td>${winery}</td>
 				<td>${region}</td>
-				<td><!-- $BeginBlock block2 -->
+				<td><!-- $BeginBlock variety_block -->
 				${variety}
-				<!-- $EndBlock block2 --></td>
+				<!-- $EndBlock variety_block --></td>
 				<td>${year}</td>
 
-				<!-- $BeginBlock block3 -->
+				<!-- $BeginBlock inventory_block -->
 				<td>${qty}</td>
 				<td>${price}</td>
-				<!-- $EndBlock block3 -->
+				<!-- $EndBlock inventory_block -->
 			</tr>
-			<!-- $EndBlock block1 -->
+			<!-- $EndBlock wine_block -->
 
 		</table>
 
