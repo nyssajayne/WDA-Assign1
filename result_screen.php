@@ -50,7 +50,7 @@
 	}
 
 	//The Monster Query.
-	$query = 'SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
+	$query = $db->prepare('SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
 		FROM wine, wine_variety, grape_variety, winery, region, inventory, items
 		WHERE wine.wine_id = wine_variety.wine_id
 		AND wine.wine_id = inventory.wine_id
@@ -58,40 +58,26 @@
 		AND wine_variety.variety_id = grape_variety.variety_id
 		AND wine.winery_id = winery.winery_id
 		AND winery.region_id = region.region_id
-		AND wine.wine_name LIKE \'%'. $wine_name .'%\' 
-		AND grape_variety.variety LIKE \'%'. $grape_variety  .'%\'
-		AND winery.winery_name LIKE \'%'. $winery_name .'%\'
-		AND region.region_name LIKE \'%'. $region_name .'%\'
-		AND wine.year BETWEEN \''. $min_year .'\' AND \''. $max_year .'\'
-		AND inventory.on_hand > \''. $on_hand .'\'
+		AND wine.wine_name LIKE ? 
+		AND grape_variety.variety LIKE ?
+		AND winery.winery_name LIKE ?
+		AND region.region_name LIKE ?
+		AND wine.year BETWEEN ? AND ?
+		AND inventory.on_hand > ?
 		'. $query_cost .'
 		'. $query_qty .'
 		GROUP BY wine.wine_id;
-		;';
-
-	/*$result = mysql_query($query);
+		;');
 
 	//If there's something wrong with the query, display the error.
-	if($result == FALSE)
+	if(!($query->execute(array($wine_name, $grape_variety, $winery_name, $region_name, $min_year, $max_year, $on_hand))))
 	{
-		$show_error =  mysql_error();
-		set_result_metadata($t, $show_error);
-	}
-
-	$no_of_results = mysql_num_rows($result);
-
-	//If there are no results.
-	if($no_of_results <= 0)
-	{
-		set_result_metadata($t, "No results.");
+		print_r($query->errorInfo());
 	}
 
 	//Else print it.
 	else
 	{
-		$show_results = 'There are '. $no_of_results .' results.';
-		set_result_metadata($t, $show_results);*/
-
 		foreach($db->query($query) as $row)
 		{
 			$result_id = $row['wine_id'];
@@ -107,7 +93,7 @@
 
 
 			//Print the grape varieties (some wines are blends)
-			$query_v = 'SELECT grape_variety.variety
+			/*$query_v = 'SELECT grape_variety.variety
 				FROM wine, wine_variety, grape_variety
 				WHERE wine.wine_id = \''. $result_id  .'\'
 				AND wine.wine_id = wine_variety.wine_id
@@ -138,12 +124,12 @@
 				$t->setVariable("qty", $result_qty);
 				$t->setVariable("price", $result_price);
 				$t->addBlock("inventory_block");
-			}
+			}*/
 			
 			$t->addBlock("wine_block");
 		}
 
-	
+	}	
 
 	$t->generateOutput();
 
