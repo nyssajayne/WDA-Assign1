@@ -97,7 +97,7 @@
 			$t->setVariable("winery", $result_winery);
 			$t->setVariable("region", $result_region);
 			$t->setVariable("year", $result_year);
-			$t->addBlock("block1");
+
 
 			//Print the grape varieties (some wines are blends)
 			$query_v = 'SELECT grape_variety.variety
@@ -115,7 +115,9 @@
 				$t->setVariable("variety", $result_variety);
 				$t->addBlock("block2");
 			}
+			
 
+			
 			//Fetches quantities and prices, needs the wine_id, which we now have
 			$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
 				FROM items
@@ -132,6 +134,8 @@
 				$t->setVariable("price", $result_price);
 				$t->addBlock("block3");
 			}
+			
+			$t->addBlock("block1");
 		}
 
 	}
