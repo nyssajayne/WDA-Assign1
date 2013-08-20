@@ -1,81 +1,47 @@
 <?php
 
 	//include database credentials and establish connection to database
-	require('connect.php');
+	require_once('connect.php');
+	
+	//MiniTemplator
+	require_once('MiniTemplator.class.php');
 
-	//Populates grape variety in the dropdown menu below
-	function populate_grape_variety()
+	$t = new MiniTemplator;
+
+	$t->readTemplateFromFile('search_screen_template.html');
+
+	$query = 'SELECT variety FROM grape_variety;';
+
+	$result = mysql_query($query);
+
+	while($row = mysql_fetch_array($result))
 	{
-		$query = 'SELECT variety FROM grape_variety;';
+		$option_value = $row['variety'];
+		$t->setVariable("variety", $option_value);
+		$t->addBlock("grape_variety");
+	}	
 
-		$result = mysql_query($query);
+	$query_min = 'SELECT DISTINCT year FROM wine ORDER BY year';
+	
+	$result_min = mysql_query($query_min);
 
-		while($row = mysql_fetch_array($result))
-		{
-			$option_value = $row['variety'];
-			echo '<option value="'. $option_value .'">'. $option_value .'</option>';
-		}	
+	while($row_min = mysql_fetch_array($result_min))
+	{
+		$option_value = $row_min['year'];
+		$t->setVariable("min_year", $option_value);
+		$t->addBlock("min_year");
 	}
 
-	function populate_year($order_by)
+	$query_max = 'SELECT DISTINCT year FROM wine ORDER BY year DESC;';
+
+	$result_max = mysql_query($query_max);
+
+	while($row_max = mysql_fetch_array($result_max))
 	{
-		if($order_by == 'min')
-		{
-			$query = 'SELECT DISTINCT year FROM wine ORDER BY year';
-		}
-		elseif($order_by == 'max')
-		{
-			$query = 'SELECT DISTINCT year FROM wine ORDER BY year DESC';
-		}
-
-		$result = mysql_query($query);
-
-		while($row = mysql_fetch_array($result))
-		{
-			$option_value = $row['year'];
-			echo '<option value"'. $option_value .'">'. $option_value .'</option>';
-		}
+		$option_value = $row_max['year'];
+		$t->setVariable("max_year", $option_value);
+		$t->addBlock("max_year");
 	}
 
+	$t->generateOutput();
 ?>
-
-<html>
-
-	<head>
-
-		<title>Search Winestore Database</title>
-
-	</head>
-
-	<body>
-
-		<h1>Search Winestore Database</h1>
-
-		<form action="result_screen.php" method="GET">
-
-			<p>Wine Name: <input type="text" name="wine_name" id="wine_name" /></p>
-			<p>Winery Name: <input type="text" name="winery_name" id="winery_name" /></p>
-			<p>Region: <input type="text" name="region_name" id="region_name" /></p>
-			<p>Grape Variety:
-				 <select name="grape_variety" id="grape_variety">
-					<?php populate_grape_variety(); ?>
-				</select></p>
-			<p>Year, between: 
-				<select name="min_year" id="min_year">
-					<?php populate_year('min'); ?>
-				</select> and 
-				
-				<select name="max_year" id="max_year">
-					<?php populate_year('max'); ?>
-				</select></p>
-			<p>Min. no. of bottles in stock: <input type="text" name="on_hand" id="on_hand" /></p>
-			<p>Min. no. of bottles ordered: <input type="text" name="qty" id="qty" /></p>
-			<p>Maximum cost: <input type="text" name="cost" id="cost" /></p>
-
-			<p><input type="submit" name="submit" id="submit" value="submit" /></p>
-
-		</form>
-
-	</body>
-
-</html>
