@@ -69,7 +69,7 @@
 		GROUP BY wine.wine_id;
 		;';
 
-	$result = mysql_query($query);
+	/*$result = mysql_query($query);
 
 	//If there's something wrong with the query, display the error.
 	if($result == FALSE)
@@ -90,9 +90,9 @@
 	else
 	{
 		$show_results = 'There are '. $no_of_results .' results.';
-		set_result_metadata($t, $show_results);
+		set_result_metadata($t, $show_results);*/
 
-		while($row = mysql_fetch_array($result))
+		foreach($db->query($query) as $row)
 		{
 			$result_id = $row['wine_id'];
 			$result_name = $row['wine_name'];
@@ -113,9 +113,7 @@
 				AND wine.wine_id = wine_variety.wine_id
 				AND wine_variety.variety_id = grape_variety.variety_id;';
 
-			$result_v = mysql_query($query_v);
-		
-			while($row_v = mysql_fetch_array($result_v))
+			foreach($db->query($query_v) as $row_v)
 			{
 				$result_variety = $row_v['variety'];
 				
@@ -132,7 +130,7 @@
 
 			$result_s = mysql_query($query_s);
 
-			while($row_s = mysql_fetch_array($result_s))
+			foreach($db->query($query_s) as $row_s)
 			{
 				$result_qty = $row_s['qty'];
 				$result_price = $row_s['price'];
@@ -145,7 +143,7 @@
 			$t->addBlock("wine_block");
 		}
 
-	}
+	
 
 	$t->generateOutput();
 
