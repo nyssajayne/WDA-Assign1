@@ -10,8 +10,6 @@
 
 	$t->readTemplateFromFile("result_screen_template.html");
 
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
 	//Retrieve all of the form elements
 	$wine_name = $_GET['wine_name'];
 	$grape_variety = $_GET['grape_variety'];
@@ -47,15 +45,17 @@
 		AND wine.year BETWEEN :min_year AND :max_year
 		AND inventory.on_hand > :on_hand';
 
-	/*if($cost!=null)
+	if($cost!=null)
 	{
-		$query .= 'AND inventory.cost < ?';
+		$query .= ' AND inventory.cost < :cost';
 	}
 
 	if($qty!=null)
 	{
-		$query .= 'AND items.qty > ?';
-	}*/
+		$query .= ' AND items.qty > :qty';
+	}
+
+	$query .= ' GROUP BY wine_id';
 	
 	$sql = $db->prepare($query);
 	$sql->bindValue(':wine_name', '%' .$wine_name. '%', PDO::PARAM_STR);
@@ -64,16 +64,23 @@
 	$sql->bindValue(':region_name', '%' .$region_name. '%', PDO::PARAM_STR);
 	$sql->bindValue(':min_year', $min_year);
 	$sql->bindValue(':max_year', $max_year);
-	$sql->bindParam(':on_hand', $on_hand);
+	$sql->bindValue(':on_hand', $on_hand);
+
+	if($cost!=null)
+	{
+		$sql->bindValue(':cost', $cost);
+	}
+
+	if($qty!=null)
+	{
+		$sql->bindValue(':qty', $qty);
+	}
 
 	//If there's something wrong with the query, display the error.
 	if($sql->execute())
 	{
-		echo $sql->rowCount().'<br />';
-		echo $sql->debugDumpParams();
-	}
 
-	$sql->setFetchMode(PDO::FETCH_ASSOC);
+		$sql->setFetchMode(PDO::FETCH_ASSOC);
 
 		while($row = $sql->fetch())
 		{
@@ -124,7 +131,7 @@
 			}*/
 			
 			$t->addBlock("wine_block");
-
+		}
 	}	
 
 	$t->generateOutput();
