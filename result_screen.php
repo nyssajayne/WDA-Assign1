@@ -97,13 +97,17 @@
 
 
 			//Print the grape varieties (some wines are blends)
-			/*$query_v = 'SELECT grape_variety.variety
+			$query_v = 'SELECT grape_variety.variety
 				FROM wine, wine_variety, grape_variety
-				WHERE wine.wine_id = \''. $result_id  .'\'
+				WHERE wine.wine_id = :result_id
 				AND wine.wine_id = wine_variety.wine_id
 				AND wine_variety.variety_id = grape_variety.variety_id;';
+			
+			$sql_v = $db->prepare($query_v);
+			$sql_v->bindValue(':result_id', $result_id);
+			$sql_v->execute();
 
-			foreach($db->query($query_v) as $row_v)
+			while($row_v = $sql_v->fetch())
 			{
 				$result_variety = $row_v['variety'];
 				
@@ -116,11 +120,13 @@
 			//Fetches quantities and prices, needs the wine_id, which we now have
 			$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
 				FROM items
-				WHERE wine_id = \''. $result_id  .'\';';
+				WHERE wine_id = :result_id;';
 
-			$result_s = mysql_query($query_s);
+			$sql_s = $db->prepare($query_s);
+			$sql_s->bindValue(':result_id', $result_id);
+			$sql_s->execute();
 
-			foreach($db->query($query_s) as $row_s)
+			while($row_s = $sql_s->fetch())
 			{
 				$result_qty = $row_s['qty'];
 				$result_price = $row_s['price'];
@@ -128,7 +134,7 @@
 				$t->setVariable("qty", $result_qty);
 				$t->setVariable("price", $result_price);
 				$t->addBlock("inventory_block");
-			}*/
+			}
 			
 			$t->addBlock("wine_block");
 		}
