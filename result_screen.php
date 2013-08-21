@@ -10,6 +10,8 @@
 
 	$t->readTemplateFromFile("result_screen_template.html");
 
+	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+
 	//Retrieve all of the form elements
 	$wine_name = $_GET['wine_name'];
 	$grape_variety = $_GET['grape_variety'];
@@ -29,28 +31,8 @@
 		return;
 	}
 
-	//If cost is not null, add it to the SQL Query
-	if($cost!=null)
-	{
-		$query_cost = 'AND inventory.cost < \''. $cost .'\'';
-	}
-	else
-	{
-		$query_cost = '';
-	}
-
-	//If qty is not null, add it to the SQL Query
-	if($qty!=null)
-	{
-		$query_qty = 'AND items.qty > \''. $qty .'\'';
-	}
-	else
-	{
-		$query_qty = '';
-	}
-
 	//The Monster Query.
-	$query = $db->prepare('SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
+	$query ='SELECT wine.wine_id, wine.wine_name, winery.winery_name, region.region_name, wine.year 
 		FROM wine, wine_variety, grape_variety, winery, region, inventory, items
 		WHERE wine.wine_id = wine_variety.wine_id
 		AND wine.wine_id = inventory.wine_id
@@ -58,27 +40,42 @@
 		AND wine_variety.variety_id = grape_variety.variety_id
 		AND wine.winery_id = winery.winery_id
 		AND winery.region_id = region.region_id
-		AND wine.wine_name LIKE ? 
-		AND grape_variety.variety LIKE ?
-		AND winery.winery_name LIKE ?
-		AND region.region_name LIKE ?
-		AND wine.year BETWEEN ? AND ?
-		AND inventory.on_hand > ?
-		'. $query_cost .'
-		'. $query_qty .'
-		GROUP BY wine.wine_id;
-		;');
+		AND wine.wine_name LIKE :wine_name 
+		AND grape_variety.variety LIKE :grape_variety
+		AND winery.winery_name LIKE :winery_name
+		AND region.region_name LIKE :region_name
+		AND wine.year BETWEEN :min_year AND :max_year
+		AND inventory.on_hand > :on_hand';
 
-	//If there's something wrong with the query, display the error.
-	if(!($query->execute(array($wine_name, $grape_variety, $winery_name, $region_name, $min_year, $max_year, $on_hand))))
+	/*if($cost!=null)
 	{
-		print_r($query->errorInfo());
+		$query .= 'AND inventory.cost < ?';
 	}
 
-	//Else print it.
-	else
+	if($qty!=null)
 	{
-		foreach($db->query($query) as $row)
+		$query .= 'AND items.qty > ?';
+	}*/
+	
+	$sql = $db->prepare($query);
+	$sql->bindValue(':wine_name', '%' .$wine_name. '%', PDO::PARAM_STR);
+	$sql->bindValue(':grape_variety', $grape_variety, PDO::PARAM_STR);
+	$sql->bindValue(':winery_name', '%' .$winery_name. '%', PDO::PARAM_STR);
+	$sql->bindValue(':region_name', '%' .$region_name. '%', PDO::PARAM_STR);
+	$sql->bindValue(':min_year', $min_year);
+	$sql->bindValue(':max_year', $max_year);
+	$sql->bindParam(':on_hand', $on_hand);
+
+	//If there's something wrong with the query, display the error.
+	if($sql->execute())
+	{
+		echo $sql->rowCount().'<br />';
+		echo $sql->debugDumpParams();
+	}
+
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+
+		while($row = $sql->fetch())
 		{
 			$result_id = $row['wine_id'];
 			$result_name = $row['wine_name'];
@@ -127,7 +124,6 @@
 			}*/
 			
 			$t->addBlock("wine_block");
-		}
 
 	}	
 
