@@ -80,63 +80,68 @@
 	if($sql->execute())
 	{
 
-		$sql->setFetchMode(PDO::FETCH_ASSOC);
+		//Inform the user how many results there are
+		$message = "There are ". $sql->rowCount() ." results.";
+		set_result_metadata($t, $message);
 
-		while($row = $sql->fetch())
+		if($sql->rowCount() > 0)
 		{
-			$result_id = $row['wine_id'];
-			$result_name = $row['wine_name'];
-			$result_winery = $row['winery_name'];
-			$result_region = $row['region_name'];
-			$result_year = $row['year'];
 
-			$t->setVariable("wine_name", $result_name);
-			$t->setVariable("winery", $result_winery);
-			$t->setVariable("region", $result_region);
-			$t->setVariable("year", $result_year);
+			$sql->setFetchMode(PDO::FETCH_ASSOC);
 
-
-			//Print the grape varieties (some wines are blends)
-			$query_v = 'SELECT grape_variety.variety
-				FROM wine, wine_variety, grape_variety
-				WHERE wine.wine_id = :result_id
-				AND wine.wine_id = wine_variety.wine_id
-				AND wine_variety.variety_id = grape_variety.variety_id;';
-			
-			$sql_v = $db->prepare($query_v);
-			$sql_v->bindValue(':result_id', $result_id);
-			$sql_v->execute();
-
-			while($row_v = $sql_v->fetch())
+			while($row = $sql->fetch())
 			{
-				$result_variety = $row_v['variety'];
+				$result_id = $row['wine_id'];
+				$result_name = $row['wine_name'];
+				$result_winery = $row['winery_name'];
+				$result_region = $row['region_name'];
+				$result_year = $row['year'];
+
+				$t->setVariable("wine_name", $result_name);
+				$t->setVariable("winery", $result_winery);
+				$t->setVariable("region", $result_region);
+				$t->setVariable("year", $result_year);
+
+				//Print the grape varieties (some wines are blends)
+				$query_v = 'SELECT grape_variety.variety
+					FROM wine, wine_variety, grape_variety
+					WHERE wine.wine_id = :result_id
+					AND wine.wine_id = wine_variety.wine_id
+					AND wine_variety.variety_id = grape_variety.variety_id;';
+			
+				$sql_v = $db->prepare($query_v);
+				$sql_v->bindValue(':result_id', $result_id);
+				$sql_v->execute();
+
+				while($row_v = $sql_v->fetch())
+				{
+					$result_variety = $row_v['variety'];
 				
-				$t->setVariable("variety", $result_variety);
-				$t->addBlock("variety_block");
+					$t->setVariable("variety", $result_variety);
+					$t->addBlock("variety_block");
+				}
+			
+				//Fetches quantities and prices, needs the wine_id, which we now have
+				$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
+					FROM items
+					WHERE wine_id = :result_id;';
+
+				$sql_s = $db->prepare($query_s);
+				$sql_s->bindValue(':result_id', $result_id);
+				$sql_s->execute();
+
+				while($row_s = $sql_s->fetch())
+				{
+					$result_qty = $row_s['qty'];
+					$result_price = $row_s['price'];
+
+					$t->setVariable("qty", $result_qty);
+					$t->setVariable("price", $result_price);
+					$t->addBlock("inventory_block");
+				}
+			
+				$t->addBlock("wine_block");
 			}
-			
-
-			
-			//Fetches quantities and prices, needs the wine_id, which we now have
-			$query_s = 'SELECT SUM(qty) AS qty, SUM(price) AS price
-				FROM items
-				WHERE wine_id = :result_id;';
-
-			$sql_s = $db->prepare($query_s);
-			$sql_s->bindValue(':result_id', $result_id);
-			$sql_s->execute();
-
-			while($row_s = $sql_s->fetch())
-			{
-				$result_qty = $row_s['qty'];
-				$result_price = $row_s['price'];
-
-				$t->setVariable("qty", $result_qty);
-				$t->setVariable("price", $result_price);
-				$t->addBlock("inventory_block");
-			}
-			
-			$t->addBlock("wine_block");
 		}
 	}	
 
