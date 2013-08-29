@@ -14,12 +14,10 @@
 	if(isset($_SESSION['stored_wines']))
 	{
 		$stored_wines = $_SESSION['stored_wines'];
-		echo "stored wines";
 	}
 	else
 	{
 		$stored_wines = array();
-		echo "no stored wines";
 	}
 
 	$t->readTemplateFromFile("result_screen_template.html");
@@ -34,7 +32,13 @@
 	$on_hand = $_GET['on_hand'];
 	$qty = $_GET['qty'];
 	$cost = $_GET['cost'];
-	//$wine_store = $_GET['wine_store'];
+	$store_wine;
+
+	//If the stored wines box has been checked.
+	if(isset($_GET['store_wine']))
+	{
+		$store_wine = $_GET['store_wine'];
+	}
 
 	//If min year is greater than max year, exit
 	if($min_year > $max_year)
@@ -156,6 +160,12 @@
 				}
 			
 				$t->addBlock("wine_block");
+
+				//If requested, store the wines in the session variable
+				if(isset($store_wine))
+				{
+					array_push($stored_wines, $result_name);
+				}
 			}
 		}
 	}	
