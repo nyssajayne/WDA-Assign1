@@ -6,6 +6,8 @@
 	//MiniTemplator
 	require_once('MiniTemplator.class.php');
 
+	session_start();
+
 	$t = new MiniTemplator;
 
 	$t->readTemplateFromFile('search_screen_template.html');

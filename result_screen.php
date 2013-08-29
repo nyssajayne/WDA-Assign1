@@ -8,6 +8,20 @@
 
 	$t = new MiniTemplator;
 
+	session_start();
+
+	//If there is an array, go fetch it
+	if(isset($_SESSION['stored_wines']))
+	{
+		$stored_wines = $_SESSION['stored_wines'];
+		echo "stored wines";
+	}
+	else
+	{
+		$stored_wines = array();
+		echo "no stored wines";
+	}
+
 	$t->readTemplateFromFile("result_screen_template.html");
 
 	//Retrieve all of the form elements
@@ -20,6 +34,7 @@
 	$on_hand = $_GET['on_hand'];
 	$qty = $_GET['qty'];
 	$cost = $_GET['cost'];
+	//$wine_store = $_GET['wine_store'];
 
 	//If min year is greater than max year, exit
 	if($min_year > $max_year)
@@ -146,6 +161,9 @@
 	}	
 
 	$t->generateOutput();
+
+	//Store the search results
+	$_SESSION['stored_wines'] = $stored_wines;
 
 	function set_result_metadata($t, $message)
 	{
